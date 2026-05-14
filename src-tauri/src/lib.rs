@@ -62,6 +62,10 @@ pub fn run() {
             // Settings
             commands::settings::get_settings,
             commands::settings::update_settings,
+            // Reflection
+            commands::reflection::get_reflections,
+            commands::reflection::get_reflection,
+            commands::reflection::create_reflection,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
