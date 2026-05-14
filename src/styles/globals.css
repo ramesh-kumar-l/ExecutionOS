@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 96%;
+
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 96%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 4%;
+
+    --secondary: 0 0% 11%;
+    --secondary-foreground: 0 0% 96%;
+
+    --muted: 0 0% 11%;
+    --muted-foreground: 0 0% 64%;
+
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 4%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 96%;
+
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 217 91% 60%;
+
+    --radius: 8px;
+
+    /* Domain colors */
+    --domain-health: 142 71% 45%;
+    --domain-career: 217 91% 60%;
+    --domain-financial: 38 92% 50%;
+    --domain-intellectual: 258 90% 66%;
+    --domain-emotional: 330 81% 60%;
+    --domain-spiritual: 190 95% 39%;
+    --domain-relationships: 24 95% 53%;
+    --domain-family: 84 81% 44%;
+    --domain-social: 270 95% 75%;
+    --domain-character: 350 89% 60%;
+    --domain-lifestyle: 175 77% 40%;
+    --domain-legacy: 239 84% 67%;
+  }
+
+  [data-theme="light"] {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 4%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 4%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 46%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+  }
+
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+  }
+
+  /* Allow text selection in content areas */
+  .selectable {
+    user-select: text;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground;
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .font-mono {
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+  }
+}

@@ -1,0 +1,38 @@
+[package]
+name = "lensstack"
+version = "0.1.0"
+description = "LENSSTACK — Strategic Life Operating System"
+authors = ["LENSSTACK"]
+edition = "2021"
+
+[lib]
+name = "lensstack_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-notification = "2"
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "sqlite", "migrate"] }
+tokio = { version = "1", features = ["full"] }
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "1"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+reqwest = { version = "0.12", features = ["json"] }
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

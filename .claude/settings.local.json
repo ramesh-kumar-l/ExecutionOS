@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"E:\\\\ClaudeProjects\\\\ExecutionOS\\\\memory-bank\")",
+      "Bash(mkdir -p \"E:\\\\ClaudeProjects\\\\ExecutionOS\\\\src-tauri\\\\src\")",
+      "Bash(mkdir -p \"E:\\\\ClaudeProjects\\\\ExecutionOS\\\\src\\\\components\\\\ui\")",
+      "Bash(mkdir -p \"E:\\\\ClaudeProjects\\\\ExecutionOS\\\\src\\\\components\\\\layout\")",
+      "Bash(mkdir -p \"E:\\\\ClaudeProjects\\\\ExecutionOS\\\\src\\\\components\\\\modules\")",
+      "Bash(npm --version)",
+      "Bash(cargo --version)",
+      "Bash(pnpm --version)",
+      "Bash(rustup --version)",
+      "Bash(where cargo *)"
+    ]
+  }
+}
