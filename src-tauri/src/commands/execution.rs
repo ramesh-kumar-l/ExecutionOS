@@ -1,7 +1,7 @@
 use tauri::State;
 use uuid::Uuid;
 use chrono::Utc;
-use crate::db::{DbPool, models::time_block::{TimeBlock, FocusSession, CreateTimeBlockInput}};
+use crate::db::{DbPool, models::time_block::{TimeBlock, FocusSession, CreateTimeBlockInput, RecurringRule, RecurringRuleRow, CreateRecurringRuleInput}};
 
 #[tauri::command]
 pub async fn get_time_blocks(date: String, db: State<'_, DbPool>) -> Result<Vec<TimeBlock>, String> {
@@ -62,6 +62,77 @@ pub async fn complete_time_block(id: String, db: State<'_, DbPool>) -> Result<()
 #[tauri::command]
 pub async fn skip_time_block(id: String, _reason: Option<String>, db: State<'_, DbPool>) -> Result<(), String> {
     sqlx::query("UPDATE time_blocks SET status = 'skipped' WHERE id = ?")
+        .bind(&id)
+        .execute(db.inner())
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn get_recurring_rules(db: State<'_, DbPool>) -> Result<Vec<RecurringRule>, String> {
+    let rows = sqlx::query_as::<_, RecurringRuleRow>(
+        "SELECT * FROM recurring_rules ORDER BY created_at ASC"
+    )
+    .fetch_all(db.inner())
+    .await
+    .map_err(|e| e.to_string())?;
+    Ok(rows.into_iter().map(RecurringRule::from).collect())
+}
+
+#[tauri::command]
+pub async fn create_recurring_rule(
+    input: CreateRecurringRuleInput,
+    db: State<'_, DbPool>,
+) -> Result<RecurringRule, String> {
+    let id = Uuid::new_v4().to_string();
+    let now = Utc::now().to_rfc3339();
+    let days_json = serde_json::to_string(&input.days_of_week).map_err(|e| e.to_string())?;
+
+    sqlx::query(
+        "INSERT INTO recurring_rules
+         (id, title, pattern, days_of_week, start_time, duration_minutes, block_type, goal_id, is_active, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?)"
+    )
+    .bind(&id)
+    .bind(&input.title)
+    .bind(&input.pattern)
+    .bind(&days_json)
+    .bind(&input.start_time)
+    .bind(input.duration_minutes)
+    .bind(&input.block_type)
+    .bind(&input.goal_id)
+    .bind(&now)
+    .execute(db.inner())
+    .await
+    .map_err(|e| e.to_string())?;
+
+    let row = sqlx::query_as::<_, RecurringRuleRow>("SELECT * FROM recurring_rules WHERE id = ?")
+        .bind(&id)
+        .fetch_one(db.inner())
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(RecurringRule::from(row))
+}
+
+#[tauri::command]
+pub async fn toggle_recurring_rule(
+    id: String,
+    is_active: bool,
+    db: State<'_, DbPool>,
+) -> Result<(), String> {
+    sqlx::query("UPDATE recurring_rules SET is_active = ? WHERE id = ?")
+        .bind(is_active as i64)
+        .bind(&id)
+        .execute(db.inner())
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn delete_recurring_rule(id: String, db: State<'_, DbPool>) -> Result<(), String> {
+    sqlx::query("DELETE FROM recurring_rules WHERE id = ?")
         .bind(&id)
         .execute(db.inner())
         .await

@@ -31,6 +31,64 @@ pub struct CreateTimeBlockInput {
     pub notes: Option<String>,
 }
 
+#[derive(Debug, sqlx::FromRow)]
+pub struct RecurringRuleRow {
+    pub id: String,
+    pub title: String,
+    pub pattern: String,
+    pub days_of_week: String,
+    pub start_time: String,
+    pub duration_minutes: i64,
+    pub block_type: String,
+    pub goal_id: Option<String>,
+    pub is_active: i64,
+    pub created_at: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RecurringRule {
+    pub id: String,
+    pub title: String,
+    pub pattern: String,
+    pub days_of_week: Vec<i64>,
+    pub start_time: String,
+    pub duration_minutes: i64,
+    pub block_type: String,
+    pub goal_id: Option<String>,
+    pub is_active: bool,
+    pub created_at: String,
+}
+
+impl From<RecurringRuleRow> for RecurringRule {
+    fn from(row: RecurringRuleRow) -> Self {
+        let days_of_week =
+            serde_json::from_str::<Vec<i64>>(&row.days_of_week).unwrap_or_default();
+        Self {
+            id: row.id,
+            title: row.title,
+            pattern: row.pattern,
+            days_of_week,
+            start_time: row.start_time,
+            duration_minutes: row.duration_minutes,
+            block_type: row.block_type,
+            goal_id: row.goal_id,
+            is_active: row.is_active != 0,
+            created_at: row.created_at,
+        }
+    }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CreateRecurringRuleInput {
+    pub title: String,
+    pub pattern: String,
+    pub days_of_week: Vec<i64>,
+    pub start_time: String,
+    pub duration_minutes: i64,
+    pub block_type: String,
+    pub goal_id: Option<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct FocusSession {
     pub id: String,

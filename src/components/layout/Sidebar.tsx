@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Layers,
   Cpu,
+  Repeat2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAppStore } from "@/stores/appStore";
@@ -29,6 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { route: "reflection", label: "Reflection", icon: PenLine, shortcut: "4" },
   { route: "knowledge", label: "Knowledge", icon: BookOpen, shortcut: "5" },
   { route: "context", label: "Context", icon: Cpu, shortcut: "6" },
+  { route: "execution", label: "Schedule", icon: Repeat2, shortcut: "7" },
 ];
 
 export function Sidebar() {

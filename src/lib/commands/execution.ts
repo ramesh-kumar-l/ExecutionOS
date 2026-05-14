@@ -4,6 +4,7 @@ import type {
   FocusSession,
   RecurringRule,
   CreateTimeBlockInput,
+  BlockType,
 } from "@/types";
 
 export async function getTimeBlocks(date: string): Promise<TimeBlock[]> {
@@ -51,4 +52,26 @@ export async function endFocusSession(id: string, notes?: string): Promise<Focus
 
 export async function getRecurringRules(): Promise<RecurringRule[]> {
   return invoke<RecurringRule[]>("get_recurring_rules");
+}
+
+export interface CreateRecurringRuleInput {
+  title: string;
+  pattern: "daily" | "weekly" | "monthly";
+  days_of_week: number[];
+  start_time: string;
+  duration_minutes: number;
+  block_type: BlockType;
+  goal_id?: string;
+}
+
+export async function createRecurringRule(input: CreateRecurringRuleInput): Promise<RecurringRule> {
+  return invoke<RecurringRule>("create_recurring_rule", input);
+}
+
+export async function toggleRecurringRule(id: string, is_active: boolean): Promise<void> {
+  return invoke<void>("toggle_recurring_rule", { id, is_active });
+}
+
+export async function deleteRecurringRule(id: string): Promise<void> {
+  return invoke<void>("delete_recurring_rule", { id });
 }

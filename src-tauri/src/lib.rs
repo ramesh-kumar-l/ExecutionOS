@@ -59,6 +59,10 @@ pub fn run() {
             commands::execution::get_active_focus_session,
             commands::execution::start_focus_session,
             commands::execution::end_focus_session,
+            commands::execution::get_recurring_rules,
+            commands::execution::create_recurring_rule,
+            commands::execution::toggle_recurring_rule,
+            commands::execution::delete_recurring_rule,
             // Settings
             commands::settings::get_settings,
             commands::settings::update_settings,
