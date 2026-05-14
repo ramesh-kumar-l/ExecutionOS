@@ -108,3 +108,44 @@
   └───────┴───────────────────────────────────────┴────────────────────────────────────────────────────────┘
 
   To run the app: install Rust (rustup), then pnpm install && pnpm tauri:dev. The app is fully offline-first — all 29 files added/updated this session are ready to compile.
+  
+    Phase 0 — Foundation (prev session)
+  - Full Tauri 2 + React + TypeScript scaffold with SQLite backend
+  - 10 shadcn-compatible UI primitives: Button, Input, Textarea, Label, Badge, Progress, Select, Separator, Dialog, Toaster
+  - Zustand stores: app, domains, goals, execution, settings, reflection
+  - Rust commands for all 5 modules; 2 SQL migrations (schema + 12 seed domains)
+
+  Phase 1 — Core Features (prev session)
+  - Goal creation — modal form with domain, priority, target date, success criteria
+  - Daily time grid — 6am–10pm, 1.5px/min, per-hour click zones, hover complete/skip actions, now-indicator line
+  - Daily reflection — 5-prompt form with mood/energy ratings, past entries accordion
+  - Settings page — theme toggle, Ollama URL (save on blur), AI enabled toggle, planning/review time pickers
+
+  Phase 2 — Core Interaction Layer (this session)
+  - Domain vision editor — pencil icon (hover) + click-to-edit on vision text → Dialog with Vision / Purpose / Current Status textarea fields; optimistic save
+  - Goal detail + milestone tracking — expandable goal rows (click to expand): description, success criteria, inline milestone list with check/delete/add-on-Enter; auto-progress recalculation from completed
+  milestones; mark complete / pause / delete goal actions; lazy load milestones per goal
+  - Focus session timer — focusStore with closure-based interval tracking; FocusTimer component with 25/50/90m quick-start; live countdown + overrun indicator (+MM:SS in red); end session with optional notes;
+  restores active session on page load
+
+  ---
+  Pending Phases
+
+  ┌───────┬─────────────────────────┬────────────────────────────────────────────────┐
+  │ Phase │         Feature         │                  Description                   │
+  ├───────┼─────────────────────────┼────────────────────────────────────────────────┤
+  │ 3     │ Weekly / Monthly review │ Guided multi-step review templates             │
+  ├───────┼─────────────────────────┼────────────────────────────────────────────────┤
+  │ 3     │ Knowledge notes         │ Markdown editor + SQLite FTS5 search           │
+  ├───────┼─────────────────────────┼────────────────────────────────────────────────┤
+  │ 4     │ Context engine          │ Decision log + snapshot capture                │
+  ├───────┼─────────────────────────┼────────────────────────────────────────────────┤
+  │ 5     │ Ollama AI integration   │ Daily briefing, reflection question generation │
+  ├───────┼─────────────────────────┼────────────────────────────────────────────────┤
+  │ 5     │ Export system           │ Markdown / JSON / encrypted backup             │
+  └───────┴─────────────────────────┴────────────────────────────────────────────────┘
+
+✻ Cogitated for 7m 48s
+
+※ recap: Building LENSSTACK, an offline-first life OS in Tauri and React. Phase 2 is complete with domain vision editing, goal milestone tracking, and focus session timer. Next: implement weekly review flows
+  (Phase 3). (disable recaps in /config)

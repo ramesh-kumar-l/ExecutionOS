@@ -5,8 +5,10 @@ import { CalendarDays, Plus } from "lucide-react";
 import { slideUp, staggerContainer } from "@/lib/animations";
 import { useGoalsStore } from "@/stores/goalsStore";
 import { useExecutionStore } from "@/stores/executionStore";
+import { useFocusStore } from "@/stores/focusStore";
 import { DailyGrid } from "@/components/execution/DailyGrid";
 import { CreateBlockModal } from "@/components/execution/CreateBlockModal";
+import { FocusTimer } from "@/components/execution/FocusTimer";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { todayIso } from "@/lib/utils";
@@ -20,10 +22,12 @@ export function TodayPage() {
     s.goals.filter((g) => g.status === "active").slice(0, 3)
   );
   const loadBlocks = useExecutionStore((s) => s.loadBlocks);
+  const loadActiveSession = useFocusStore((s) => s.loadActiveSession);
 
   useEffect(() => {
     void loadBlocks(today);
-  }, [today, loadBlocks]);
+    void loadActiveSession();
+  }, [today, loadBlocks, loadActiveSession]);
 
   const openCreate = (startTime?: string) => {
     setDefaultStart(startTime);
@@ -49,6 +53,11 @@ export function TodayPage() {
             <h1 className="text-2xl font-semibold text-foreground">
               {format(new Date(), "MMMM d, yyyy")}
             </h1>
+          </div>
+
+          {/* Focus timer */}
+          <div className="mb-6">
+            <FocusTimer />
           </div>
 
           {/* Active goals strip */}

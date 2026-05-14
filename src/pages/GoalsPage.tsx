@@ -5,18 +5,9 @@ import { slideUp, staggerContainer } from "@/lib/animations";
 import { useGoalsStore } from "@/stores/goalsStore";
 import { useDomainsStore } from "@/stores/domainsStore";
 import { CreateGoalModal } from "@/components/goals/CreateGoalModal";
+import { GoalRow } from "@/components/goals/GoalDetail";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { PRIORITY_LABELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-
-const PRIORITY_VARIANT: Record<string, "default" | "destructive" | "secondary"> = {
-  critical: "destructive",
-  high: "default",
-  medium: "secondary",
-  low: "secondary",
-};
 
 export function GoalsPage() {
   const [createOpen, setCreateOpen] = useState(false);
@@ -58,6 +49,7 @@ export function GoalsPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setFilterStatus((s) => (s === "active" ? "all" : "active"))}
+                className={cn(filterStatus === "all" && "bg-muted")}
               >
                 <Filter size={14} />
                 {filterStatus === "active" ? "Active" : "All"}
@@ -83,11 +75,7 @@ export function GoalsPage() {
               <p className="text-xs text-muted-foreground/60 mt-1">
                 Create your first strategic goal to get started.
               </p>
-              <Button
-                size="sm"
-                className="mt-4"
-                onClick={() => setCreateOpen(true)}
-              >
+              <Button size="sm" className="mt-4" onClick={() => setCreateOpen(true)}>
                 <Plus size={14} /> New goal
               </Button>
             </div>
@@ -99,45 +87,8 @@ export function GoalsPage() {
               className="space-y-2"
             >
               {displayed.map((goal) => (
-                <motion.div
-                  key={goal.id}
-                  variants={slideUp}
-                  className="group flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:border-accent/25 transition-colors cursor-default"
-                >
-                  {/* Progress ring */}
-                  <div className="relative w-10 h-10 shrink-0">
-                    <svg className="w-10 h-10 -rotate-90" viewBox="0 0 36 36">
-                      <circle cx="18" cy="18" r="15" fill="none" stroke="hsl(var(--border))" strokeWidth="2.5" />
-                      <circle
-                        cx="18" cy="18" r="15" fill="none"
-                        stroke="hsl(var(--accent))" strokeWidth="2.5"
-                        strokeDasharray={`${(goal.progress / 100) * 94.2} 94.2`}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-[9px] font-mono text-foreground">
-                      {goal.progress}
-                    </span>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{goal.title}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-muted-foreground">{getDomainName(goal.domain_id)}</span>
-                      {goal.target_date && (
-                        <span className="text-xs text-muted-foreground/60">· {goal.target_date}</span>
-                      )}
-                    </div>
-                    {goal.progress > 0 && (
-                      <Progress value={goal.progress} className="mt-2 h-1" />
-                    )}
-                  </div>
-
-                  {/* Priority */}
-                  <Badge variant={PRIORITY_VARIANT[goal.priority] ?? "secondary"}>
-                    {PRIORITY_LABELS[goal.priority] ?? goal.priority}
-                  </Badge>
+                <motion.div key={goal.id} variants={slideUp}>
+                  <GoalRow goal={goal} domainName={getDomainName(goal.domain_id)} />
                 </motion.div>
               ))}
             </motion.div>
