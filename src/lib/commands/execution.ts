@@ -11,6 +11,10 @@ export async function getTimeBlocks(date: string): Promise<TimeBlock[]> {
   return invoke<TimeBlock[]>("get_time_blocks", { date });
 }
 
+export async function getTimeBlocksRange(start_date: string, end_date: string): Promise<TimeBlock[]> {
+  return invoke<TimeBlock[]>("get_time_blocks_range", { start_date, end_date });
+}
+
 export async function createTimeBlock(input: CreateTimeBlockInput): Promise<TimeBlock> {
   return invoke<TimeBlock>("create_time_block", input);
 }

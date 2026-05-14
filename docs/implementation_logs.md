@@ -289,3 +289,57 @@
   Build prerequisite (unchanged): user must install rustup, pnpm, WebView2, and MSVC build tools, then run pnpm install && pnpm tauri:dev.
   
   
+  
+  ● Phase 7 is done. Here's the summary:
+
+  ---
+  What Was Built — Phase 7
+
+  7 files created/modified across backend and frontend.
+
+  New: Backend (get_time_blocks_range)
+
+  src-tauri/src/commands/execution.rs — one new Rust command that fetches all time_blocks rows between a start_date and end_date in a single query (WHERE date >= ? AND date <= ?), ordered by date + start_time.
+   Registered in lib.rs.
+
+  New: TypeScript IPC (getTimeBlocksRange)
+
+  src/lib/commands/execution.ts — thin invoke wrapper matching the Rust command signature.
+
+  New: weeklyStore.ts
+
+  Zustand store managing weekStart (Monday of displayed week), blocksByDate: Record<string, TimeBlock[]> (blocks indexed by ISO date), and isLoading. setWeekStart navigates the week and triggers a reload.
+  addBlockForDate optimistically inserts a newly-created block.
+
+  New: WeekGrid.tsx
+
+  7-column grid component reusing the same constants as DailyGrid (HOUR_START=6, HOUR_END=22, PX_PER_MIN=1.5). Key mechanics:
+  - Drag-to-create: mousedown on any day column records a start position, document mousemove updates a ghost overlay (snapped to 15-min grid), mouseup computes the time range and opens CreateBlockModal with
+  pre-filled start + end times. Single clicks (< 15 min drag) open the modal with just a start time.
+  - WeekBlockCard renders existing blocks as compact colored chips (block-type colors match the rest of the app).
+  - Today's column has a subtle accent tint + the now-indicator line.
+  - Sticky day-header row shows abbreviated day name + date number.
+
+  New: WeeklyPage.tsx
+
+  Page wrapper with a header showing the week's date range (e.g. "May 11 – 17, 2025") and < This week > navigation buttons using date-fns.
+
+  Modified: CreateBlockModal.tsx
+
+  Added two optional props — defaultEndTime? (pre-fills end time from drag selection) and onBlockCreated?(block) (callback fired after successful creation, used by WeekGrid to add the block to the weekly store
+   without a refetch).
+
+  Wiring
+
+  - AppRoute extended with "weekly".
+  - App.tsx renders <WeeklyPage> on that route.
+  - Sidebar.tsx adds "Week" nav item (CalendarRange icon, shortcut 2) between Today and Goals. All other shortcuts shifted by 1.
+
+  ---
+  Implemented so far (Phases 0–7): Full scaffold, 12-domain life architecture, goals + milestones, daily execution (time blocks + focus timer), reflection wizard, knowledge notes (FTS5), context engine
+  (snapshots + decision log), AI integration (Ollama), export system, recurring schedule rules, and now the weekly planning grid.
+
+  Remaining — Phase 8: FTS5 trigger migration for knowledge search sync, accessibility audit, performance pass, and final design polish.
+
+✻ Sautéed for 11m 13s
+

@@ -7,13 +7,15 @@ import { Select } from "@/components/ui/select";
 import { useExecutionStore } from "@/stores/executionStore";
 import { useGoalsStore } from "@/stores/goalsStore";
 import { todayIso } from "@/lib/utils";
-import type { BlockType, EnergyType } from "@/types";
+import type { BlockType, EnergyType, TimeBlock } from "@/types";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   defaultStartTime?: string;
+  defaultEndTime?: string;
   date?: string;
+  onBlockCreated?: (block: TimeBlock) => void;
 }
 
 const DEFAULTS = {
@@ -30,7 +32,7 @@ function nextHour(startTime: string): string {
   return `${String(Math.min(h + 1, 23)).padStart(2, "0")}:00`;
 }
 
-export function CreateBlockModal({ open, onClose, defaultStartTime, date }: Props) {
+export function CreateBlockModal({ open, onClose, defaultStartTime, defaultEndTime, date, onBlockCreated }: Props) {
   const [form, setForm] = useState(DEFAULTS);
   const [submitting, setSubmitting] = useState(false);
   const createBlock = useExecutionStore((s) => s.createBlock);
@@ -39,9 +41,9 @@ export function CreateBlockModal({ open, onClose, defaultStartTime, date }: Prop
   useEffect(() => {
     if (open) {
       const start = defaultStartTime ?? "09:00";
-      setForm({ ...DEFAULTS, start_time: start, end_time: nextHour(start) });
+      setForm({ ...DEFAULTS, start_time: start, end_time: defaultEndTime ?? nextHour(start) });
     }
-  }, [open, defaultStartTime]);
+  }, [open, defaultStartTime, defaultEndTime]);
 
   const patch = (key: keyof typeof DEFAULTS) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -61,7 +63,10 @@ export function CreateBlockModal({ open, onClose, defaultStartTime, date }: Prop
       goal_id: form.goal_id || undefined,
     });
     setSubmitting(false);
-    if (result) onClose();
+    if (result) {
+      onBlockCreated?.(result);
+      onClose();
+    }
   };
 
   return (

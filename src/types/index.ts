@@ -231,6 +231,7 @@ export interface UserSettings {
 
 export type AppRoute =
   | "today"
+  | "weekly"
   | "goals"
   | "domains"
   | "execution"

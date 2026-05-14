@@ -53,6 +53,7 @@ pub fn run() {
             commands::goals::delete_milestone,
             // Execution
             commands::execution::get_time_blocks,
+            commands::execution::get_time_blocks_range,
             commands::execution::create_time_block,
             commands::execution::complete_time_block,
             commands::execution::skip_time_block,

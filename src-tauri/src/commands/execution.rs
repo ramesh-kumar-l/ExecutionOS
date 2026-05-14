@@ -60,6 +60,22 @@ pub async fn complete_time_block(id: String, db: State<'_, DbPool>) -> Result<()
 }
 
 #[tauri::command]
+pub async fn get_time_blocks_range(
+    start_date: String,
+    end_date: String,
+    db: State<'_, DbPool>,
+) -> Result<Vec<TimeBlock>, String> {
+    sqlx::query_as::<_, TimeBlock>(
+        "SELECT * FROM time_blocks WHERE date >= ? AND date <= ? ORDER BY date ASC, start_time ASC",
+    )
+    .bind(&start_date)
+    .bind(&end_date)
+    .fetch_all(db.inner())
+    .await
+    .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 pub async fn skip_time_block(id: String, _reason: Option<String>, db: State<'_, DbPool>) -> Result<(), String> {
     sqlx::query("UPDATE time_blocks SET status = 'skipped' WHERE id = ?")
         .bind(&id)

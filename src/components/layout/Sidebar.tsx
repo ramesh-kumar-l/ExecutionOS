@@ -1,5 +1,6 @@
 import {
   CalendarDays,
+  CalendarRange,
   Target,
   LayoutGrid,
   BookOpen,
@@ -25,12 +26,13 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { route: "today", label: "Today", icon: CalendarDays, shortcut: "1" },
-  { route: "goals", label: "Goals", icon: Target, shortcut: "2" },
-  { route: "domains", label: "Domains", icon: LayoutGrid, shortcut: "3" },
-  { route: "reflection", label: "Reflection", icon: PenLine, shortcut: "4" },
-  { route: "knowledge", label: "Knowledge", icon: BookOpen, shortcut: "5" },
-  { route: "context", label: "Context", icon: Cpu, shortcut: "6" },
-  { route: "execution", label: "Schedule", icon: Repeat2, shortcut: "7" },
+  { route: "weekly", label: "Week", icon: CalendarRange, shortcut: "2" },
+  { route: "goals", label: "Goals", icon: Target, shortcut: "3" },
+  { route: "domains", label: "Domains", icon: LayoutGrid, shortcut: "4" },
+  { route: "reflection", label: "Reflection", icon: PenLine, shortcut: "5" },
+  { route: "knowledge", label: "Knowledge", icon: BookOpen, shortcut: "6" },
+  { route: "context", label: "Context", icon: Cpu, shortcut: "7" },
+  { route: "execution", label: "Schedule", icon: Repeat2, shortcut: "8" },
 ];
 
 export function Sidebar() {

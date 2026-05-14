@@ -11,6 +11,7 @@ import { SettingsPage } from "@/pages/SettingsPage";
 import { KnowledgePage } from "@/pages/KnowledgePage";
 import { ContextPage } from "@/pages/ContextPage";
 import { SchedulePage } from "@/pages/SchedulePage";
+import { WeeklyPage } from "@/pages/WeeklyPage";
 import { useAppStore } from "@/stores/appStore";
 import { useDomainsStore } from "@/stores/domainsStore";
 import { useGoalsStore } from "@/stores/goalsStore";
@@ -43,6 +44,7 @@ export default function App() {
       <PageLayout>
         <AnimatePresence mode="wait">
           {activeRoute === "today" && <TodayPage key="today" />}
+          {activeRoute === "weekly" && <WeeklyPage key="weekly" />}
           {activeRoute === "goals" && <GoalsPage key="goals" />}
           {activeRoute === "domains" && <DomainsPage key="domains" />}
           {activeRoute === "reflection" && <ReflectionPage key="reflection" />}
