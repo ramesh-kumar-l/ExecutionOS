@@ -6,9 +6,12 @@ import { slideUp, staggerContainer } from "@/lib/animations";
 import { useGoalsStore } from "@/stores/goalsStore";
 import { useExecutionStore } from "@/stores/executionStore";
 import { useFocusStore } from "@/stores/focusStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { useAiStore } from "@/stores/aiStore";
 import { DailyGrid } from "@/components/execution/DailyGrid";
 import { CreateBlockModal } from "@/components/execution/CreateBlockModal";
 import { FocusTimer } from "@/components/execution/FocusTimer";
+import { AiBriefingPanel } from "@/components/ai/AiBriefingPanel";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { todayIso } from "@/lib/utils";
@@ -23,11 +26,22 @@ export function TodayPage() {
   );
   const loadBlocks = useExecutionStore((s) => s.loadBlocks);
   const loadActiveSession = useFocusStore((s) => s.loadActiveSession);
+  const settings = useSettingsStore((s) => s.settings);
+  const { checkConnection, loadBriefing } = useAiStore();
 
   useEffect(() => {
     void loadBlocks(today);
     void loadActiveSession();
   }, [today, loadBlocks, loadActiveSession]);
+
+  useEffect(() => {
+    if (!settings?.ai_enabled) return;
+    const initAi = async () => {
+      const connected = await checkConnection();
+      if (connected) await loadBriefing();
+    };
+    void initAi();
+  }, [settings?.ai_enabled, checkConnection, loadBriefing]);
 
   const openCreate = (startTime?: string) => {
     setDefaultStart(startTime);
@@ -54,6 +68,9 @@ export function TodayPage() {
               {format(new Date(), "MMMM d, yyyy")}
             </h1>
           </div>
+
+          {/* AI briefing */}
+          {settings?.ai_enabled && <AiBriefingPanel />}
 
           {/* Focus timer */}
           <div className="mb-6">

@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Target, Plus, Filter } from "lucide-react";
+import { Target, Plus, Filter, Brain } from "lucide-react";
 import { slideUp, staggerContainer } from "@/lib/animations";
 import { useGoalsStore } from "@/stores/goalsStore";
 import { useDomainsStore } from "@/stores/domainsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { useAiStore } from "@/stores/aiStore";
 import { CreateGoalModal } from "@/components/goals/CreateGoalModal";
 import { GoalRow } from "@/components/goals/GoalDetail";
+import { AiInsightPanel } from "@/components/ai/AiInsightPanel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -16,12 +19,19 @@ export function GoalsPage() {
   const goals = useGoalsStore((s) => s.goals);
   const isLoading = useGoalsStore((s) => s.isLoading);
   const domains = useDomainsStore((s) => s.domains);
+  const settings = useSettingsStore((s) => s.settings);
+  const { isConnected, isLoadingInsights, insights, checkConnection, loadInsights, clearInsights } = useAiStore();
 
   const getDomainName = (id: string) => domains.find((d) => d.id === id)?.name ?? "—";
 
   const displayed = filterStatus === "active"
     ? goals.filter((g) => g.status === "active")
     : goals;
+
+  const handleAnalyze = async () => {
+    const connected = isConnected || await checkConnection();
+    if (connected) await loadInsights();
+  };
 
   const activeCount = goals.filter((g) => g.status === "active").length;
   const completedCount = goals.filter((g) => g.status === "completed").length;
@@ -45,6 +55,18 @@ export function GoalsPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              {settings?.ai_enabled && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => insights.length > 0 ? clearInsights() : void handleAnalyze()}
+                  disabled={isLoadingInsights}
+                  className={cn(insights.length > 0 && "bg-accent/10 text-accent")}
+                >
+                  <Brain size={14} />
+                  {isLoadingInsights ? "Analyzing…" : insights.length > 0 ? "Clear AI" : "Analyze"}
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="sm"
@@ -93,6 +115,8 @@ export function GoalsPage() {
               ))}
             </motion.div>
           )}
+
+          {settings?.ai_enabled && <AiInsightPanel />}
         </div>
       </motion.div>
 

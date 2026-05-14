@@ -78,6 +78,13 @@ pub fn run() {
             commands::context::get_decision_log,
             commands::context::create_decision,
             commands::context::delete_decision,
+            // AI
+            commands::ai::check_ai_connection,
+            commands::ai::get_daily_briefing,
+            commands::ai::generate_reflection_questions,
+            commands::ai::analyze_goal_alignment,
+            // Export
+            commands::export::export_data,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

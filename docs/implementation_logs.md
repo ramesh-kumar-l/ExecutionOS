@@ -236,3 +236,56 @@
   └───────┴──────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
   
   
+  
+  ● Let me do a quick sanity check on the modified pages to make sure the edits are coherent.
+
+  Read 2 files (ctrl+o to expand)
+
+● All files look correct. Now updating the project memory.
+
+  Wrote 1 memory (ctrl+o to expand)
+
+● ---
+  Phase 5 Complete — Summary (< 600 words)
+
+  ---
+  What was implemented this session: Phase 5
+
+  A. Ollama AI Integration (5 Rust commands + TypeScript layer + Zustand store + 2 React components)
+
+  - check_ai_connection — pings {ollama_url}/api/tags with a 5-second timeout; returns { connected, model } without ever throwing. Called automatically when TodayPage mounts (if ai_enabled in settings).
+  - get_daily_briefing — queries today's time blocks + top 5 active goals from SQLite, builds a structured prompt, POSTs to Ollama's /api/generate with format: "json", parses the response into AIBriefing {
+  focus, key_blocks, alert, question }.
+  - generate_reflection_questions — takes a reflection type string (daily, weekly, etc.), generates 4 tailored questions via Ollama, returns string[].
+  - analyze_goal_alignment — queries all active goals with their domain names and progress, asks Ollama for 2–4 AIInsight objects (insight, reasoning, suggestion, confidence level).
+  - AiBriefingPanel — shows on TodayPage (between header and FocusTimer) when AI is enabled. States: checking connection → offline notice → loading skeleton → live briefing with refresh button.
+  - AiInsightPanel + Analyze button on GoalsPage — button toggles between "Analyze" / "Analyzing…" / "Clear AI". Panel shows insights with color-coded confidence badges (emerald=high, amber=medium, grey=low).
+  - aiStore — Zustand store managing all AI state: isConnected, briefing, insights, reflectionQuestions, plus their loading flags. All AI features silently no-op if Ollama is offline.
+
+  B. Export System (1 Rust command + TypeScript wrapper + Settings UI)
+
+  - export_data — accepts format (json/markdown/csv/encrypted) + scope (full/goals/reflections/execution/knowledge) + output_path + optional password. Writes the file directly to disk.
+  - JSON: pretty-printed object with metadata header + all requested entity arrays.
+  - Markdown: human-readable document with sections per entity type (domains, goals, reflections, time blocks, knowledge notes), tables for time blocks.
+  - CSV: flat CSV with appropriate columns per scope (CSV + full scope returns a helpful error directing users to use JSON or Markdown).
+  - Encrypted: full JSON → AES-256-GCM with 100,000 rounds of SHA-256 key derivation from password + random salt. File format: LENSV1 magic bytes + 16-byte salt + 12-byte nonce + ciphertext. Added aes-gcm =
+  "0.10", sha2 = "0.10", rand = "0.8" to Cargo.toml.
+  - Settings Export UI — new section at the bottom of SettingsPage with format toggle buttons, scope toggle buttons, password input (shown only for encrypted), Export button that opens a native file save
+  dialog via @tauri-apps/plugin-dialog, and inline success/error feedback.
+
+  ---
+  What is still pending
+
+  ┌───────┬────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Phase │                                            Description                                             │
+  ├───────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 6     │ Recurring time blocks UI — recurring_rules table exists in DB, needs create/toggle/delete frontend │
+  ├───────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 7     │ Weekly planning multi-day grid view                                                                │
+  ├───────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 8     │ FTS5 trigger migration for knowledge search, accessibility audit, performance pass, final polish   │
+  └───────┴────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+  Build prerequisite (unchanged): user must install rustup, pnpm, WebView2, and MSVC build tools, then run pnpm install && pnpm tauri:dev.
+  
+  

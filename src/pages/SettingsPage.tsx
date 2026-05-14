@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun, Monitor, Download } from "lucide-react";
+import { save } from "@tauri-apps/plugin-dialog";
 import { slideUp } from "@/lib/animations";
 import { useSettingsStore } from "@/stores/settingsStore";
+import { exportData, type ExportInput } from "@/lib/commands/export";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const THEMES = [
@@ -16,6 +19,11 @@ const THEMES = [
 export function SettingsPage() {
   const { settings, isLoading, loadSettings, updateSettings } = useSettingsStore();
   const [ollamaUrl, setOllamaUrl] = useState("");
+  const [exportFormat, setExportFormat] = useState<ExportInput["format"]>("json");
+  const [exportScope, setExportScope] = useState<ExportInput["scope"]>("full");
+  const [exportPassword, setExportPassword] = useState("");
+  const [exportStatus, setExportStatus] = useState<"idle" | "success" | "error">("idle");
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     if (!settings) void loadSettings();
@@ -24,6 +32,31 @@ export function SettingsPage() {
   useEffect(() => {
     if (settings) setOllamaUrl(settings.ollama_url);
   }, [settings]);
+
+  const handleExport = async () => {
+    const ext = exportFormat === "markdown" ? "md" : exportFormat === "encrypted" ? "lse" : exportFormat;
+    const filePath = await save({
+      defaultPath: `lensstack-${exportScope}-export.${ext}`,
+      filters: [{ name: exportFormat.toUpperCase(), extensions: [ext] }],
+    });
+    if (!filePath) return;
+
+    setIsExporting(true);
+    setExportStatus("idle");
+    try {
+      await exportData({
+        format: exportFormat,
+        scope: exportScope,
+        output_path: filePath,
+        password: exportFormat === "encrypted" ? exportPassword : undefined,
+      });
+      setExportStatus("success");
+    } catch {
+      setExportStatus("error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (isLoading || !settings) {
     return (
@@ -153,6 +186,87 @@ export function SettingsPage() {
                   onChange={(e) => void updateSettings({ daily_review_time: e.target.value })}
                   className="w-32"
                 />
+              </div>
+            </div>
+          </section>
+
+          {/* Export */}
+          <section>
+            <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+              Export & Backup
+            </h2>
+            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
+              <div>
+                <Label className="text-xs text-muted-foreground mb-2 block">Format</Label>
+                <div className="flex gap-1 flex-wrap">
+                  {(["json", "markdown", "csv", "encrypted"] as const).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setExportFormat(f)}
+                      className={cn(
+                        "px-2.5 py-1 rounded text-xs font-medium transition-colors capitalize",
+                        exportFormat === f
+                          ? "bg-accent/10 text-accent"
+                          : "text-muted-foreground hover:text-foreground bg-muted/40 hover:bg-muted"
+                      )}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-xs text-muted-foreground mb-2 block">Scope</Label>
+                <div className="flex gap-1 flex-wrap">
+                  {(["full", "goals", "reflections", "execution", "knowledge"] as const).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setExportScope(s)}
+                      className={cn(
+                        "px-2.5 py-1 rounded text-xs font-medium transition-colors capitalize",
+                        exportScope === s
+                          ? "bg-accent/10 text-accent"
+                          : "text-muted-foreground hover:text-foreground bg-muted/40 hover:bg-muted"
+                      )}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {exportFormat === "encrypted" && (
+                <div>
+                  <Label htmlFor="export-pw" className="text-xs text-muted-foreground mb-1.5 block">
+                    Password <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="export-pw"
+                    type="password"
+                    value={exportPassword}
+                    onChange={(e) => setExportPassword(e.target.value)}
+                    placeholder="Encryption password"
+                    className="w-full max-w-xs text-sm"
+                  />
+                </div>
+              )}
+
+              <div className="flex items-center gap-3">
+                <Button
+                  size="sm"
+                  onClick={() => void handleExport()}
+                  disabled={isExporting || (exportFormat === "encrypted" && !exportPassword.trim())}
+                >
+                  <Download size={13} />
+                  {isExporting ? "Exporting…" : "Export"}
+                </Button>
+                {exportStatus === "success" && (
+                  <span className="text-xs text-emerald-500">Exported successfully</span>
+                )}
+                {exportStatus === "error" && (
+                  <span className="text-xs text-destructive">Export failed — check console</span>
+                )}
               </div>
             </div>
           </section>
