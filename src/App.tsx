@@ -8,6 +8,7 @@ import { GoalsPage } from "@/pages/GoalsPage";
 import { DomainsPage } from "@/pages/DomainsPage";
 import { ReflectionPage } from "@/pages/ReflectionPage";
 import { SettingsPage } from "@/pages/SettingsPage";
+import { KnowledgePage } from "@/pages/KnowledgePage";
 import { useAppStore } from "@/stores/appStore";
 import { useDomainsStore } from "@/stores/domainsStore";
 import { useGoalsStore } from "@/stores/goalsStore";
@@ -43,6 +44,7 @@ export default function App() {
           {activeRoute === "goals" && <GoalsPage key="goals" />}
           {activeRoute === "domains" && <DomainsPage key="domains" />}
           {activeRoute === "reflection" && <ReflectionPage key="reflection" />}
+          {activeRoute === "knowledge" && <KnowledgePage key="knowledge" />}
           {activeRoute === "settings" && <SettingsPage key="settings" />}
         </AnimatePresence>
       </PageLayout>

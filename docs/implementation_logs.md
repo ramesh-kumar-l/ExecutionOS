@@ -149,3 +149,41 @@
 
 ※ recap: Building LENSSTACK, an offline-first life OS in Tauri and React. Phase 2 is complete with domain vision editing, goal milestone tracking, and focus session timer. Next: implement weekly review flows
   (Phase 3). (disable recaps in /config)
+
+
+  Summary — What's Been Built (≤ 600 words)
+
+  ---
+  Implemented So Far
+
+  Phase 0 — Foundation
+  Full Tauri 2 + React + TypeScript + SQLite scaffold. App shell with animated sidebar, command palette (⌘K), dark/light theme, routing, and settings page. Zustand store architecture. SQLite migrations with 12
+   seeded life domains and complete schema (goals, milestones, time blocks, focus sessions, reflections, context, knowledge).
+
+  Phase 1 — Execution Engine
+  Daily time-block grid (DailyGrid), CreateBlockModal with block-type/energy selectors, goal linkage, FocusTimer component (countdown + overrun detection + quick-start 25/50/90 min), focusStore with
+  closure-based interval timer (non-serializable-safe).
+
+  Phase 2 — Goals & Domain Interaction
+  GoalRow with lazy-loaded milestones, accordion expand/collapse, progress ring SVG, milestone checkbox/delete, auto-progress recalculation. DomainEditDialog for editing vision/purpose/status inline with hover
+   pencil icon. CreateGoalModal with domain/priority/date/success-criteria fields. Goals page with active/all filter.
+
+  Phase 3 (just implemented) — Review System + Knowledge
+
+  Reflection (Weekly + Monthly Reviews):
+  - WeeklyReviewForm — 7-step wizard: Wins → Challenges → Learnings → Goal Progress → Domain Check-in → Energy Pattern → Next Week Intentions. Animated step transitions, progress bar, step-by-step navigation.
+  - MonthlyReviewForm — 6-step wizard: Goal Review → Domain Assessment → Top Wins → Challenges & Lessons → Habits & Rituals → Next Month Priorities.
+  - ReflectionPage updated with a 3-tab switcher (Daily / Weekly / Monthly). Each tab shows the relevant form, detects if a recent entry already exists (today / this week / this month), and shows a "done"
+  banner with an "Add another" option. Past entries per tab shown in collapsible rows.
+
+  Knowledge Notes Module:
+  - Rust backend: KnowledgeRow/KnowledgeNote model, 4 commands: get_knowledge_notes (with search + type filter + domain filter), create_knowledge_note, update_knowledge_note, delete_knowledge_note. Search uses
+   LIKE on title/content/tags (FTS5 table schema already in DB, triggers deferred to a future migration).
+  - knowledgeStore — Zustand store with optimistic delete, debounced search, type filter state.
+  - KnowledgePage — search bar with debounce, 7-type filter pill tabs (All / Notes / Learnings / Books / Resources / Synthesis / Decisions), animated note list, empty states.
+  - NoteCard — expandable accordion with type badge, tags, content, source link, delete button.
+  - CreateNoteModal — note type selector (6 types), title, content with context-sensitive placeholder, comma-separated tags, source field (shown only for Book/Resource). Wired into App.tsx on the knowledge
+  route (already in sidebar).
+  
+  
+  

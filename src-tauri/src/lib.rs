@@ -66,6 +66,11 @@ pub fn run() {
             commands::reflection::get_reflections,
             commands::reflection::get_reflection,
             commands::reflection::create_reflection,
+            // Knowledge
+            commands::knowledge::get_knowledge_notes,
+            commands::knowledge::create_knowledge_note,
+            commands::knowledge::update_knowledge_note,
+            commands::knowledge::delete_knowledge_note,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
