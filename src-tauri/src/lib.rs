@@ -71,6 +71,13 @@ pub fn run() {
             commands::knowledge::create_knowledge_note,
             commands::knowledge::update_knowledge_note,
             commands::knowledge::delete_knowledge_note,
+            // Context Engine
+            commands::context::get_context_snapshots,
+            commands::context::create_context_snapshot,
+            commands::context::delete_context_snapshot,
+            commands::context::get_decision_log,
+            commands::context::create_decision,
+            commands::context::delete_decision,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

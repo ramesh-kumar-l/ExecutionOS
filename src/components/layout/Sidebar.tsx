@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Layers,
+  Cpu,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAppStore } from "@/stores/appStore";
@@ -27,6 +28,7 @@ const NAV_ITEMS: NavItem[] = [
   { route: "domains", label: "Domains", icon: LayoutGrid, shortcut: "3" },
   { route: "reflection", label: "Reflection", icon: PenLine, shortcut: "4" },
   { route: "knowledge", label: "Knowledge", icon: BookOpen, shortcut: "5" },
+  { route: "context", label: "Context", icon: Cpu, shortcut: "6" },
 ];
 
 export function Sidebar() {
