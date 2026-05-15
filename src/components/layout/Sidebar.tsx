@@ -79,12 +79,14 @@ export function Sidebar() {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
+      <nav aria-label="Main navigation" className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
         {NAV_ITEMS.map(({ route, label, icon: Icon, shortcut }) => (
           <button
             key={route}
             onClick={() => setRoute(route)}
             title={sidebarCollapsed ? `${label} (⌘${shortcut})` : undefined}
+            aria-label={sidebarCollapsed ? `${label} (⌘${shortcut})` : label}
+            aria-current={activeRoute === route ? "page" : undefined}
             className={cn(
               "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
               activeRoute === route
@@ -92,7 +94,7 @@ export function Sidebar() {
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
-            <Icon size={16} className="shrink-0" />
+            <Icon size={16} className="shrink-0" aria-hidden="true" />
             {!sidebarCollapsed && <span className="truncate">{label}</span>}
           </button>
         ))}
@@ -103,6 +105,8 @@ export function Sidebar() {
         <button
           onClick={() => setRoute("settings")}
           title={sidebarCollapsed ? "Settings" : undefined}
+          aria-label="Settings"
+          aria-current={activeRoute === "settings" ? "page" : undefined}
           className={cn(
             "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
             activeRoute === "settings"
@@ -110,19 +114,21 @@ export function Sidebar() {
               : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
           )}
         >
-          <Settings size={16} className="shrink-0" />
+          <Settings size={16} className="shrink-0" aria-hidden="true" />
           {!sidebarCollapsed && <span>Settings</span>}
         </button>
 
         <button
           onClick={toggleSidebar}
+          aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-expanded={!sidebarCollapsed}
           className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
         >
           {sidebarCollapsed ? (
-            <ChevronRight size={16} className="shrink-0" />
+            <ChevronRight size={16} className="shrink-0" aria-hidden="true" />
           ) : (
             <>
-              <ChevronLeft size={16} className="shrink-0" />
+              <ChevronLeft size={16} className="shrink-0" aria-hidden="true" />
               <span>Collapse</span>
             </>
           )}

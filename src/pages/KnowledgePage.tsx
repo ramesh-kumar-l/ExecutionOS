@@ -81,30 +81,38 @@ export function KnowledgePage() {
             <Search
               size={14}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+              aria-hidden="true"
             />
             <input
-              type="text"
+              type="search"
               value={localSearch}
               onChange={(e) => setLocalSearch(e.target.value)}
               placeholder="Search notes…"
+              aria-label="Search notes"
               className="w-full text-sm rounded-lg border border-border bg-card pl-9 pr-9 py-2 focus:outline-none focus:ring-2 focus:ring-ring placeholder:opacity-40 text-foreground"
             />
             {localSearch && (
               <button
                 onClick={() => setLocalSearch("")}
+                aria-label="Clear search"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                <X size={13} />
+                <X size={13} aria-hidden="true" />
               </button>
             )}
           </div>
 
           {/* Type filter tabs */}
-          <div className="flex gap-1 mb-6 overflow-x-auto pb-1">
+          <div
+            role="group"
+            aria-label="Filter by note type"
+            className="flex gap-1 mb-6 overflow-x-auto pb-1"
+          >
             {TYPE_FILTERS.map(({ value, label }) => (
               <button
                 key={value}
                 onClick={() => handleFilterType(value)}
+                aria-pressed={filterType === value}
                 className={cn(
                   "px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors shrink-0",
                   filterType === value

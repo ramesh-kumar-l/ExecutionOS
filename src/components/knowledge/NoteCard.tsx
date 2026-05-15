@@ -47,6 +47,8 @@ export function NoteCard({ note }: Props) {
       <button
         className="w-full flex items-start gap-3 p-4 text-left hover:bg-muted/20 transition-colors rounded-lg"
         onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+        aria-label={expanded ? `Collapse ${note.title}` : `Expand ${note.title}`}
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">

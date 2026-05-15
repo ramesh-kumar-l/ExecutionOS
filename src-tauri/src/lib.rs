@@ -98,9 +98,11 @@ pub fn run() {
 async fn run_migrations(pool: &sqlx::SqlitePool) -> Result<(), sqlx::Error> {
     let migration_001 = include_str!("db/migrations/001_initial.sql");
     let migration_002 = include_str!("db/migrations/002_seed_domains.sql");
+    let migration_003 = include_str!("db/migrations/003_fts5_triggers.sql");
 
     sqlx::query(migration_001).execute(pool).await?;
     sqlx::query(migration_002).execute(pool).await?;
+    sqlx::query(migration_003).execute(pool).await?;
 
     Ok(())
 }

@@ -2,6 +2,16 @@ use tauri::State;
 use crate::db::DbPool;
 use crate::db::models::knowledge::{KnowledgeNote, KnowledgeRow};
 
+/// Convert a raw search string into a safe FTS5 MATCH expression.
+/// Each whitespace-separated token becomes a quoted prefix match: `"token"*`
+fn fts_query(q: &str) -> String {
+    q.split_whitespace()
+        .filter(|w| !w.is_empty())
+        .map(|w| format!("\"{}\"*", w.replace('"', "\"\"")))
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
 #[tauri::command]
 pub async fn get_knowledge_notes(
     search: Option<String>,
@@ -13,34 +23,34 @@ pub async fn get_knowledge_notes(
     let limit = limit.unwrap_or(50);
 
     let rows = if let Some(q) = search.as_deref().filter(|s| !s.is_empty()) {
-        let pattern = format!("%{}%", q);
+        let fts = fts_query(q);
         if let Some(nt) = &note_type {
             sqlx::query_as::<_, KnowledgeRow>(
-                "SELECT id, type AS note_type, title, content, tags, domain_id, goal_id,
-                        linked_note_ids, source, created_at, updated_at
-                 FROM knowledge_notes
-                 WHERE (title LIKE ? OR content LIKE ? OR tags LIKE ?)
-                   AND type = ?
-                 ORDER BY updated_at DESC LIMIT ?",
+                "SELECT kn.id, kn.type AS note_type, kn.title, kn.content, kn.tags,
+                        kn.domain_id, kn.goal_id, kn.linked_note_ids, kn.source,
+                        kn.created_at, kn.updated_at
+                 FROM knowledge_notes kn
+                 JOIN knowledge_notes_fts fts ON kn.rowid = fts.rowid
+                 WHERE knowledge_notes_fts MATCH ?
+                   AND kn.type = ?
+                 ORDER BY rank LIMIT ?",
             )
-            .bind(&pattern)
-            .bind(&pattern)
-            .bind(&pattern)
+            .bind(&fts)
             .bind(nt)
             .bind(limit)
             .fetch_all(db.inner())
             .await
         } else {
             sqlx::query_as::<_, KnowledgeRow>(
-                "SELECT id, type AS note_type, title, content, tags, domain_id, goal_id,
-                        linked_note_ids, source, created_at, updated_at
-                 FROM knowledge_notes
-                 WHERE title LIKE ? OR content LIKE ? OR tags LIKE ?
-                 ORDER BY updated_at DESC LIMIT ?",
+                "SELECT kn.id, kn.type AS note_type, kn.title, kn.content, kn.tags,
+                        kn.domain_id, kn.goal_id, kn.linked_note_ids, kn.source,
+                        kn.created_at, kn.updated_at
+                 FROM knowledge_notes kn
+                 JOIN knowledge_notes_fts fts ON kn.rowid = fts.rowid
+                 WHERE knowledge_notes_fts MATCH ?
+                 ORDER BY rank LIMIT ?",
             )
-            .bind(&pattern)
-            .bind(&pattern)
-            .bind(&pattern)
+            .bind(&fts)
             .bind(limit)
             .fetch_all(db.inner())
             .await

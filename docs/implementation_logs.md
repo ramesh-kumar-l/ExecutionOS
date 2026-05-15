@@ -343,3 +343,55 @@
 
 ✻ Sautéed for 11m 13s
 
+
+● All Phase 8 changes are done. Here's the summary:
+
+  ---
+  What's implemented — full project summary (≤600 words)
+
+  Phase 8: FTS5 Triggers + Accessibility + Performance (this session)
+
+  003_fts5_triggers.sql (new migration) — Three SQLite triggers (knowledge_notes_ai, knowledge_notes_au, knowledge_notes_ad) keep the knowledge_notes_fts virtual table in sync automatically on every INSERT,
+  UPDATE, and DELETE. A rebuild command populates the index for any pre-existing rows. Two performance indexes added: idx_knowledge_notes_updated_at and idx_knowledge_notes_type. Registered in lib.rs as
+  migration 003.
+
+  commands/knowledge.rs — Search path upgraded from table-scan LIKE (%q%) to FTS5 full-text search. A fts_query() helper sanitizes user input into safe FTS5 MATCH expressions ("token"* prefix matching per
+  word). Results are ranked by relevance (ORDER BY rank) instead of recency when searching.
+
+  Accessibility audit — Sidebar nav buttons now carry aria-label (for collapsed icon-only state), aria-current="page" (active route), and aria-hidden="true" on decorative icons. The collapse toggle gets
+  aria-expanded and an explicit label. <nav> element gets aria-label="Main navigation". NoteCard expand button gains aria-expanded={expanded} and a descriptive aria-label. KnowledgePage search input is
+  type="search" with aria-label="Search notes", the clear button has aria-label="Clear search", and the filter button group gets role="group" + aria-label + aria-pressed on each button.
+
+  ---
+  All phases implemented to date
+
+  ┌───────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Phase │                                                       What was built                                                        │
+  ├───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 0     │ Full Tauri 2 + React + SQLite scaffold, design system, app shell, 9-page routing                                            │
+  ├───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 1     │ Today page — daily time blocks, FocusTimer, GoalRow with milestones, Domains edit                                           │
+  ├───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 2     │ Focus session store + timer, GoalDetail milestone view, Domain vision editor                                                │
+  ├───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 3     │ Weekly/Monthly review wizard, Knowledge notes CRUD + FTS5 virtual table schema                                              │
+  ├───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 4     │ Context Engine — Context Snapshots + Decision Log (CRUD, expandable cards, nav item)                                        │
+  ├───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 5     │ AI briefing via Ollama + full data Export System                                                                            │
+  ├───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 6     │ Recurring Time Blocks — rule CRUD, SchedulePage with RuleCard + CreateRuleModal                                             │
+  ├───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 7     │ Weekly planning grid — 7-column WeekGrid with drag-to-create blocks, week navigation, get_time_blocks_range backend command │
+  ├───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 8     │ FTS5 sync triggers, ranked full-text search, accessibility (ARIA), performance indexes                                      │
+  └───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+  ---
+  Pending / not yet done
+
+  All 8 planned phases are complete. The app is feature-complete but has not been run yet — it requires:
+  1. rustup + MSVC build tools + WebView2 (Windows)
+  2. pnpm install && pnpm tauri dev
+
+  Possible future work: Playwright E2E tests, keyboard shortcut overlay (⌘?), mobile-friendly layout, cloud backup option.
